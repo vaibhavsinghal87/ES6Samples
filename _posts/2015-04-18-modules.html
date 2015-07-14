@@ -7,7 +7,15 @@ categories: misc
 <div class="sample-area">
   <div class="copy">
     <h1>Modules</h1>
-    <p>There's nothing here yet! Why not <a href="https://github.com/ddoolin/ES6Samples">contribute?</a></p>
+As of ES6, we no longer need to rely on the enclosing function and closure to provide us with module support. ES6 modules have first class syntactic and functional support.
+
+ES6 uses file-based modules, meaning one module per file.
+
+The API of an ES6 module is static. That is, you define statically what all the top-level exports are on your module’s public API, and those cannot be amended later.
+
+ES6 modules are singletons. That is, there’s only one instance of the module, which maintains its state. Every time you import that module into another module, you get a reference to the one centralized instance. If you want to be able to produce multiple module instances, your module will need to provide some sort of factory to do it.
+
+The properties and methods you expose on a module’s public API are not just normal assignments of values or references. They are actual bindings (almost like pointers) to the identifiers in your inner module definition.
   </div>
   <div class="code">
   </div>
