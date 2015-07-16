@@ -7,8 +7,232 @@ categories: functions
 <div class="sample-area">
   <div class="copy">
     <h1>Arrow Functions</h1>
-    <p>There's nothing here yet! Why not <a href="https://github.com/ddoolin/ES6Samples">contribute?</a></p>
+	{% markdown %}
+A new token has been added to `ES6`, and it is called `fat arrow`, represented by `=>`.
+
+The arrow function `definition` consists of a `parameter list` (of zero or more parameters, and surrounding ( .. ) if there’s not exactly one parameter), followed by the `=>` marker, followed by a function `body`.
+
+`Syntax` : 
+
+- **Basic syntax** :
+
+  (param1, param2, paramN) => { statements }
+
+  (param1, param2, paramN) => expression      
+
+
+- **Parentheses are optional when there's only one argument** :
+
+  singleParam => { statements }
+
+  singleParam => expression
+
+- **A function with no arguments requires parentheses** :
+
+  () => { statements }
+
+- **Wrap an object literal expression in parentheses** :
+
+  params => ({foo: bar})
+
+- **Rest parameters are supported** :
+
+  (param1, param2, ...rest) => { statements }
+{% endmarkdown %}
   </div>
   <div class="code">
+{% highlight javascript linenos %}
+// Empty arrow function returns undefined
+var empty = () => {};
+console.log(empty());       // undefined
+
+// Single parameter case needs no parentheses around parameter list
+var identity = x => x;
+console.log(identity(2));   // 2
+
+// No need for parentheses even for lower-precedence expression body
+var square = x => x * x;
+console.log(square(3));     // 9
+
+// Parenthesize the body to return an object literal expression
+var key_maker = val => ({key: val});
+console.log(key_maker("arrow functions"));   // Object {key: "arrow functions"}  
+
+//Parenthesis-Parameter Rules
+var x;
+x = () => {};     // No parameters, MUST HAVE PARENS
+x = (val) => {};  // One parameter, with parens, OPTIONAL
+x = val => {};    // One parameter, without parens, OPTIONAL
+x = (y, z) => {}; // Two or more parameters, MUST HAVE PARENS
+x = y, z => {};   // Syntax Error: must wrap with parens when using multiple params
+
+{% endhighlight %}
+  </div>
+</div>
+
+<div class="sample-area">
+  <div class="copy">
+	{% markdown %}
+
+The `body` only needs to be enclosed by { .. } if there’s more than one expression, or if the body consists of a non-expression statement. If there’s only one expression, and you omit the surrounding { .. }, there’s an implied `return` in front of the expression. 
+
+{% endmarkdown %}
+  </div>
+  <div class="code">
+{% highlight javascript linenos %}
+var result;
+result = (x => x * 2)(3);
+console.log(result);    // 6
+
+result = ((x, y) => {
+	x = x * 2;
+	return x + y;
+})( 3, "A" ); 
+console.log(result);   // "6A"
+{% endhighlight %}
+  </div>
+</div>
+
+
+<div class="sample-area">
+  <div class="copy">
+{% markdown %}
+
+<h4>Shorter Syntax</h4>
+An arrow function expression (also known as `fat arrow` function) has a shorter syntax compared to normal functions which makes them very attractive for writing code. It also saves us a lot of typing and can actually enhance readability.
+
+`function (arguments) { expression }`
+
+Is analogous to this:
+
+`arguments => expression`
+
+
+{% endmarkdown %}
+  </div>
+  <div class="code">
+{% highlight javascript linenos %}
+
+// normal function
+function add(x,y) {
+    return x + y;
+}
+
+// arrow function
+var add = (x,y) => x + y;
+{% endhighlight %}
+  </div>
+</div>
+
+
+<div class="sample-area">
+  <div class="copy">
+{% markdown %}
+
+<h4>Lexical Scoping this</h4>
+
+In general, `this` reference inside a function is established by the context of how a particular function is invoked. 
+
+Arrow functions are a new syntax that allow developers to manage their scope differently than before. When using arrow functions the value of `this` inside of the function is determined by where the arrow function is defined not where it is used.
+
+{% endmarkdown %}
+  </div>
+  <div class="code">
+{% highlight javascript linenos %}
+// normal function
+var Square = {
+	init: function(){
+		setTimeout(function() {
+			console.log(this.getSquare(2));  // TypeError: this.getSquare is not a function
+		}, 200);
+	},
+	getSquare: function(x){
+		return x * x;
+	}
+}
+Square.init();
+
+
+// arrow function
+var Square = {
+	init: function(){
+		setTimeout(() => {
+			console.log(this.getSquare(2));  // 4
+		}, 200);
+	},
+	getSquare: function(x){
+		return x * x;
+	}
+}
+Square.init();
+
+{% endhighlight %}
+  </div>
+</div>
+
+<div class="sample-area">
+  <div class="copy">
+{% markdown %}
+The methods `call(), apply(), and bind()` are still usable with arrow functions, though they do not augment the value of *this*. Since *this* is already bound lexically, invoking an arrow function through the call() or apply() methods can only pass in arguments, but has no effect on *this*. *this* reference never changes inside an Arrow function.
+
+In short, Arrow functions doesn't have their own `this`.
+
+{% endmarkdown %}
+  </div>
+  <div class="code">
+{% highlight javascript linenos %}
+// try to change this reference using call
+function Square(){
+	this.id = 123;
+	this.log = () => {
+		console.log(this.id);
+	}
+}
+
+var obj = {id: 456};
+new Square().log.call(obj)       // 123
+{% endhighlight %}
+  </div>
+</div>
+
+
+<div class="sample-area">
+  <div class="copy">
+{% markdown %}
+
+<h4>Other considerations</h4>
+The `typeof` operator returns `function` for arrow functions.
+
+Arrow functions are still instances of `Function`, so `instanceof` works the same way.
+
+You can’t access arguments through the `arguments` object, you must use named arguments or other ES6 features such as rest arguments.
+
+Arrow functions cannot be used as `constructors` and will throw an error when used with `new`.
+
+Arrow functions are always `anonymous`.
+
+It's not a replacement for the `function` keyword, at all.
+{% endmarkdown %}
+  </div>
+  <div class="code">
+{% highlight javascript linenos %}
+
+console.log(typeof(() => {}));   // function
+
+console.log((() => {}) instanceof Function);   // true
+
+console.log(Object.getPrototypeOf(() => {}) == Function.prototype);  // true
+
+var func;
+func = function(){
+  	console.log(arguments);   // [2]
+};
+func(2);
+
+func = x => {
+  	console.log(arguments);   // [], consoles blank array
+};
+func();
+{% endhighlight %}
   </div>
 </div>
